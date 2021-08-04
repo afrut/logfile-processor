@@ -247,12 +247,19 @@ namespace LogfileProcessor
                     var sorted = files.OrderBy(f => f.LastWriteTime).ToList();
 
                     // Remove files that are not within start and end times.
-                    DateTime start = Functions.parseDate(startTime);
-                    DateTime end = Functions.parseDate(endTime);
+                    startTime = startTime.Trim();
+                    endTime = endTime.Trim();
+                    DateTime start = DateTime.Now;
+                    DateTime end = DateTime.Now;
+                    if(startTime.Length > 0)
+                        start = Functions.parseDate(startTime);
+                    if(endTime.Length > 0)
+                        end = Functions.parseDate(endTime);
                     cnt = 0;
                     while(cnt < sorted.Count)
                     {
-                        if (sorted[cnt].LastWriteTime < start || sorted[cnt].CreationTime > end)
+                        if ((startTime.Length > 0 && sorted[cnt].LastWriteTime < start)
+                            || (endTime.Length > 0 && sorted[cnt].CreationTime > end))
                             sorted.RemoveAt(cnt);
                         else cnt++;
                     }
