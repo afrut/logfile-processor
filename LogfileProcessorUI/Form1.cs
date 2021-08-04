@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace LogfileProcessorUI
 {
@@ -25,25 +26,28 @@ namespace LogfileProcessorUI
             this.textBox3.Enabled = false;
             this.textBox4.Enabled = false;
             this.textBox5.Enabled = false;
+            this.textBox6.Enabled = false;
             this.button2.Enabled = false;
             this.button3.Enabled = false;
-            this.label1.Text = "File:";
+            this.button4.Enabled = false;
+            this.label2.Text = "File:";
             var now = DateTime.Now;
             string startTime = now.AddHours(-24).ToString("yyyyMMdd_HHmmss");
             string endTime = now.ToString("yyyyMMdd_HHmmss");
-            this.textBox4.Text = startTime;
-            this.textBox5.Text = endTime;
+            this.textBox5.Text = startTime;
+            this.textBox6.Text = endTime;
 
             // TESTING ONLY
             this.textBox1.Text = @"D:\src\cs-templates\SampleLoggingClient\bin\Debug\netcoreapp3.1\SampleLoggingClient.log";
-            this.textBox6.Text = "Sum .* is \\d*\r\n----------\r\nPrevious random";
+            this.textBox7.Text = "Sum .* is \\d*\r\n----------\r\nPrevious random";
 
             // Event handlers.
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckChanged);
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             this.button2.Click += new System.EventHandler(button2_Click);
             this.button3.Click += new System.EventHandler(button3_Click);
             this.button4.Click += new System.EventHandler(button4_Click);
+            this.button5.Click += new System.EventHandler(button5_Click);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -100,13 +104,26 @@ namespace LogfileProcessorUI
 
         private void button3_Click(object sender, EventArgs e)
         {
+            List<string> filenames = getMatchingFileNames(this.textBox3.Text, this.textBox1.Text);
+            var shortnames = new StringBuilder();
+            foreach(string filename in filenames)
+            {
+                var fi = new FileInfo(filename);
+                shortnames.Append(fi.Name + "\r\n");
+            }
+            var results = new FormEmptyTextBox("Matching Files", shortnames.ToString());
+            results.Show();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
             CommonOpenFileDialog dialog = new CommonOpenFileDialog();
 
             // Set initial directory.
-            if (Directory.Exists(this.textBox3.Text))
-                dialog.InitialDirectory = this.textBox3.Text;
-            else if (File.Exists(this.textBox3.Text))
-                dialog.InitialDirectory = Directory.GetParent(this.textBox3.Text).FullName;
+            if (Directory.Exists(this.textBox4.Text))
+                dialog.InitialDirectory = this.textBox4.Text;
+            else if (File.Exists(this.textBox4.Text))
+                dialog.InitialDirectory = Directory.GetParent(this.textBox4.Text).FullName;
             else if (Directory.Exists(this.textBox1.Text))
                 dialog.InitialDirectory = this.textBox1.Text;
             else if (File.Exists(this.textBox1.Text))
@@ -114,10 +131,10 @@ namespace LogfileProcessorUI
             dialog.IsFolderPicker = false;
             dialog.DefaultFileName = "output.txt";
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-                this.textBox3.Text = dialog.FileName;
+                this.textBox4.Text = dialog.FileName;
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void button5_Click(object sender, EventArgs e)
         {
             using (Process process = new Process())
             {
@@ -136,25 +153,37 @@ namespace LogfileProcessorUI
                 {
                     // Processing multiple selected files.
                     if (this.textBox2.Text.Trim().Length > 0)
+                    {
                         args.Append($"-Files ");
-                    foreach(string filename in this.textBox2.Text.Split(new string[] {","}, StringSplitOptions.None))
-                        args.Append(this.textBox1.Text + filename + " ");
+                        foreach (string filename in this.textBox2.Text.Split(new string[] { "," }, StringSplitOptions.None))
+                            args.Append(this.textBox1.Text + filename.Trim() + " ");
+                    }
+                    else if (this.textBox3.Text.Length > 0)
+                    {
+                        List<string> filenames = getMatchingFileNames(this.textBox3.Text, this.textBox1.Text);
+                        if (filenames.Count > 0)
+                        {
+                            args.Append($"-Files ");
+                            foreach (String filename in filenames)
+                                args.Append($"{filename} ");
+                        }
+                    }
                 }
 
                 // Check if output file is specified.
-                if (this.textBox3.Text.Trim().Length > 0)
-                    args.Append($"-Output {this.textBox3.Text.Trim()} ");
+                if (this.textBox4.Text.Trim().Length > 0)
+                    args.Append($"-Output {this.textBox4.Text.Trim()} ");
 
                 // Check if start and end times are specified.
-                if (this.textBox4.Text.Trim().Length > 0)
-                    args.Append($"-StartTime {this.textBox4.Text.Trim()} ");
                 if (this.textBox5.Text.Trim().Length > 0)
-                    args.Append($"-EndTime {this.textBox5.Text.Trim()} ");
+                    args.Append($"-StartTime {this.textBox5.Text.Trim()} ");
+                if (this.textBox6.Text.Trim().Length > 0)
+                    args.Append($"-EndTime {this.textBox6.Text.Trim()} ");
 
                 // Adding regex patterns.
-                if (this.textBox6.Text.Trim().Length > 0)
+                if (this.textBox7.Text.Trim().Length > 0)
                 {
-                    string[] patterns = this.textBox6.Text.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+                    string[] patterns = this.textBox7.Text.Split(new string[] { "\r\n" }, StringSplitOptions.None);
                     if (patterns.Length > 0) args.Append("-Patterns ");
                     foreach (String pattern in patterns) args.Append($"\"{pattern}\" ");
                 }
@@ -173,9 +202,11 @@ namespace LogfileProcessorUI
                 this.textBox3.Enabled = false;
                 this.textBox4.Enabled = false;
                 this.textBox5.Enabled = false;
+                this.textBox6.Enabled = false;
                 this.button2.Enabled = false;
                 this.button3.Enabled = false;
-                this.label1.Text = "File:";
+                this.button4.Enabled = false;
+                this.label2.Text = "File:";
             }
             else
             {
@@ -183,10 +214,26 @@ namespace LogfileProcessorUI
                 this.textBox3.Enabled = true;
                 this.textBox4.Enabled = true;
                 this.textBox5.Enabled = true;
+                this.textBox6.Enabled = true;
                 this.button2.Enabled = true;
                 this.button3.Enabled = true;
-                this.label1.Text = "Directory:";
+                this.button4.Enabled = true;
+                this.label2.Text = "Directory:";
             }
+        }
+
+        private List<string> getMatchingFileNames(string patternStr, string dir)
+        {
+            var ret = new List<string>();
+            Regex pattern = new Regex(patternStr, RegexOptions.Compiled);
+            if (File.Exists(dir))
+                dir = Directory.GetParent(this.textBox1.Text).FullName;
+
+            if (Directory.Exists(dir))
+                foreach (String filename in Directory.GetFiles(dir))
+                    if (pattern.IsMatch(filename))
+                        ret.Add(filename);
+            return ret;
         }
     }
 }
