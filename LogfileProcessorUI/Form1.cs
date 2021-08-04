@@ -30,16 +30,14 @@ namespace LogfileProcessorUI
             this.label1.Text = "File:";
 
             // TESTING ONLY
-            this.checkBox1.Checked = false;
-            this.button2.Enabled = true;
-            this.textBox2.Enabled = true;
-            this.textBox1.Text = @"D:\src\cs-templates\SampleLoggingClient\bin\Debug\netcoreapp3.1\";//SampleLoggingClient.log";
+            this.textBox1.Text = @"D:\src\cs-templates\SampleLoggingClient\bin\Debug\netcoreapp3.1\SampleLoggingClient.log";
             this.textBox6.Text = "Sum .* is \\d*\r\n----------\r\nPrevious random";
 
             // Event handlers.
             this.button1.Click += new System.EventHandler(this.button1_Click);
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckChanged);
             this.button2.Click += new System.EventHandler(button2_Click);
+            this.button3.Click += new System.EventHandler(button3_Click);
             this.button4.Click += new System.EventHandler(button4_Click);
         }
 
@@ -95,6 +93,25 @@ namespace LogfileProcessorUI
             }
         }
 
+        private void button3_Click(object sender, EventArgs e)
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+
+            // Set initial directory.
+            if (Directory.Exists(this.textBox3.Text))
+                dialog.InitialDirectory = this.textBox3.Text;
+            else if (File.Exists(this.textBox3.Text))
+                dialog.InitialDirectory = Directory.GetParent(this.textBox3.Text).FullName;
+            else if (Directory.Exists(this.textBox1.Text))
+                dialog.InitialDirectory = this.textBox1.Text;
+            else if (File.Exists(this.textBox1.Text))
+                dialog.InitialDirectory = Directory.GetParent(this.textBox1.Text).FullName;
+            dialog.IsFolderPicker = false;
+            dialog.DefaultFileName = "output.txt";
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                this.textBox3.Text = dialog.FileName;
+        }
+
         private void button4_Click(object sender, EventArgs e)
         {
             using (Process process = new Process())
@@ -107,20 +124,24 @@ namespace LogfileProcessorUI
                 {
                     // Tailing a single file.
                     args.Append("-Tail ");
-                    if (this.textBox1.Text.Length > 0)
+                    if (this.textBox1.Text.Trim().Length > 0)
                         args.Append($"-Files \"{this.textBox1.Text}\" ");
                 }
                 else
                 {
                     // Processing multiple selected files.
-                    if (this.textBox2.Text.Length > 0)
+                    if (this.textBox2.Text.Trim().Length > 0)
                         args.Append($"-Files ");
                     foreach(string filename in this.textBox2.Text.Split(new string[] {","}, StringSplitOptions.None))
                         args.Append(this.textBox1.Text + filename + " ");
                 }
 
+                // Check if output file is specified.
+                if (this.textBox3.Text.Trim().Length > 0)
+                    args.Append($"-Output {this.textBox3.Text.Trim()} ");
+
                 // Adding regex patterns.
-                if (this.textBox6.Text.Length > 0)
+                if (this.textBox6.Text.Trim().Length > 0)
                 {
                     string[] patterns = this.textBox6.Text.Split(new string[] { "\r\n" }, StringSplitOptions.None);
                     if (patterns.Length > 0) args.Append("-Patterns ");

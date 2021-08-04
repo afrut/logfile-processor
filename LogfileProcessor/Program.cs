@@ -9,25 +9,33 @@ namespace LogfileProcessor
 {
     static class Functions
     {
-        internal static void processLog(string filename, List<Regex> patterns)
+        internal static void processLog(IEnumerable<string> filenames, List<Regex> patterns = null, string output = "")
         {
-            if (patterns.Count > 0)
+            Action<string> print = (x) => Console.WriteLine(x);
+            using StreamWriter outfile = new(output);
+            if (output.Length > 0)
+                print = (x) => outfile.WriteLine(x);
+
+            if (patterns is not null && patterns.Count > 0)
             {
-                using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                foreach (string filename in filenames)
                 {
-                    using (StreamReader sr = new StreamReader(fs))
+                    using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
-                        while (true)
+                        using (StreamReader sr = new StreamReader(fs))
                         {
-                            string line = sr.ReadLine();
-                            if (line is null) break;
-                            int cntPattern = 0;
-                            while (cntPattern < patterns.Count)
+                            while (true)
                             {
-                                if (patterns[cntPattern++].IsMatch(line))
+                                string line = sr.ReadLine();
+                                if (line is null) break;
+                                int cntPattern = 0;
+                                while (cntPattern < patterns.Count)
                                 {
-                                    Console.WriteLine(line);
-                                    break;
+                                    if (patterns[cntPattern++].IsMatch(line))
+                                    {
+                                        print(line);
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -36,15 +44,18 @@ namespace LogfileProcessor
             }
             else
             {
-                using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                foreach (string filename in filenames)
                 {
-                    using (StreamReader sr = new StreamReader(fs))
+                    using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
-                        while (true)
+                        using (StreamReader sr = new StreamReader(fs))
                         {
-                            string line = sr.ReadLine();
-                            if (line is null) break;
-                            else Console.WriteLine(line);
+                            while (true)
+                            {
+                                string line = sr.ReadLine();
+                                if (line is null) break;
+                                else print(line);
+                            }
                         }
                     }
                 }
@@ -53,15 +64,15 @@ namespace LogfileProcessor
 
         internal static void processLog(List<string> filenames)
         {
-            var patterns = new List<Regex>();
-            foreach (String filename in filenames)
-                processLog(filename, patterns);
+            processLog(filenames);
         }
 
-        internal static void processLog(List<FileInfo> files, List<Regex> patterns)
+        internal static void processLog(List<FileInfo> files, List<Regex> patterns, string output = "")
         {
+            var filenames = new List<string>();
             foreach (FileInfo fi in files)
-                processLog(fi.FullName, patterns);
+                filenames.Add(fi.FullName);
+            processLog(filenames, patterns, output);
         }
 
         internal static void tail(string filename, List<Regex> patterns)
@@ -183,13 +194,16 @@ namespace LogfileProcessor
             {
                 if(args[idxarg].Equals("-Tail")) tail = true;
                 else if(args[idxarg].Equals("-FilePattern")) filePattern = args[++idxarg];
-                else if(args[idxarg].Equals("-Output")) output = args[++idxarg];
+                else if(args[idxarg].Equals("-Output")) output = args[++idxarg].Trim();
                 else if(args[idxarg].Equals("-StartTime")) startTime = args[++idxarg];
                 else if(args[idxarg].Equals("-EndTime")) endTime = args[++idxarg];
                 else if(args[idxarg].Equals("-Files"))
                 {
                     idxarg++;
-                    idxarg = Functions.collectArgs(filenames, idxarg, args);
+                    var ls = new List<string>();
+                    idxarg = Functions.collectArgs(ls, idxarg, args);
+                    foreach (String filename in ls)
+                        filenames.Add(filename.Trim());
                 }
                 else if (args[idxarg].Equals("-Patterns"))
                 {
@@ -215,11 +229,11 @@ namespace LogfileProcessor
                     var files = new FileInfo[filenames.Count];
                     int cnt = 0;
                     foreach (string filename in filenames)
-                    {
                         files[cnt++] = new FileInfo(filename);
-                    }
                     var sorted = files.OrderBy(f => f.LastWriteTime).ToList();
-                    Functions.processLog(sorted, patternsRegex);
+
+                    // Check if an output file is specified.
+                    Functions.processLog(sorted, patternsRegex, output);
                 }
             }
             catch (FileNotFoundException)
@@ -227,6 +241,7 @@ namespace LogfileProcessor
                 Console.WriteLine($"Cannot find {filenames[0]}. Returning.");
             }
 
+            Console.WriteLine("Done.");
             Console.ReadLine();
         }
     }
