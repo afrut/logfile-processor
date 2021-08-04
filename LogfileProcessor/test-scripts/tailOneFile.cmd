@@ -1,1 +1,1 @@
-LogFileProcessor -Tail -File "D:\src\cs-templates\SampleLoggingClient\bin\Debug\netcoreapp3.1\SampleLoggingClient.log"
+LogFileProcessor -Tail -Files "D:\src\cs-templates\SampleLoggingClient\bin\Debug\netcoreapp3.1\SampleLoggingClient.log"

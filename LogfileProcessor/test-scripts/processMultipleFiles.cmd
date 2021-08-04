@@ -1,0 +1,1 @@
+LogFileProcessor -Files "D:\src\cs-templates\SampleLoggingClient\bin\Debug\netcoreapp3.1\SampleLoggingClient.log" "D:\src\cs-templates\SampleLoggingClient\bin\Debug\netcoreapp3.1\SampleLoggingClient.0.log" "D:\src\cs-templates\SampleLoggingClient\bin\Debug\netcoreapp3.1\SampleLoggingClient.1.log"

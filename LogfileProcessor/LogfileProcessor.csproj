@@ -12,9 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="tailOneFile.cmd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Remove="tailOneFile.cmd" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /QY test-scripts $(OutDir)" />
+  </Target>
 
 </Project>
