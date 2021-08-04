@@ -28,6 +28,11 @@ namespace LogfileProcessorUI
             this.button2.Enabled = false;
             this.button3.Enabled = false;
             this.label1.Text = "File:";
+            var now = DateTime.Now;
+            string startTime = now.AddHours(-24).ToString("yyyyMMdd_HHmmss");
+            string endTime = now.ToString("yyyyMMdd_HHmmss");
+            this.textBox4.Text = startTime;
+            this.textBox5.Text = endTime;
 
             // TESTING ONLY
             this.textBox1.Text = @"D:\src\cs-templates\SampleLoggingClient\bin\Debug\netcoreapp3.1\SampleLoggingClient.log";
@@ -139,6 +144,12 @@ namespace LogfileProcessorUI
                 // Check if output file is specified.
                 if (this.textBox3.Text.Trim().Length > 0)
                     args.Append($"-Output {this.textBox3.Text.Trim()} ");
+
+                // Check if start and end times are specified.
+                if (this.textBox4.Text.Trim().Length > 0)
+                    args.Append($"-StartTime {this.textBox4.Text.Trim()} ");
+                if (this.textBox5.Text.Trim().Length > 0)
+                    args.Append($"-EndTime {this.textBox5.Text.Trim()} ");
 
                 // Adding regex patterns.
                 if (this.textBox6.Text.Trim().Length > 0)

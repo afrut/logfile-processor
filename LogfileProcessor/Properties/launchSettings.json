@@ -2,7 +2,7 @@
   "profiles": {
     "LogfileProcessor": {
       "commandName": "Project",
-      "commandLineArgs": "-Files D:\\src\\cs-templates\\SampleLoggingClient\\bin\\Debug\\netcoreapp3.1\\SampleLoggingClient.log D:\\src\\cs-templates\\SampleLoggingClient\\bin\\Debug\\netcoreapp3.1\\SampleLoggingClient.0.log D:\\src\\cs-templates\\SampleLoggingClient\\bin\\Debug\\netcoreapp3.1\\SampleLoggingClient.1.log D:\\src\\cs-templates\\SampleLoggingClient\\bin\\Debug\\netcoreapp3.1\\SampleLoggingClient.2.log D:\\src\\cs-templates\\SampleLoggingClient\\bin\\Debug\\netcoreapp3.1\\SampleLoggingClient.3.log D:\\src\\cs-templates\\SampleLoggingClient\\bin\\Debug\\netcoreapp3.1\\SampleLoggingClient.4.log -Output D:\\src\\logfile-processor\\LogfileProcessorUI\\bin\\Debug\\output.txt -Patterns \"Sum .* is \\d*\" \"----------\" \"Previous random\""
+      "commandLineArgs": "-Files D:\\src\\cs-templates\\SampleLoggingClient\\bin\\Debug\\netcoreapp3.1\\SampleLoggingClient.log D:\\src\\cs-templates\\SampleLoggingClient\\bin\\Debug\\netcoreapp3.1\\SampleLoggingClient.0.log D:\\src\\cs-templates\\SampleLoggingClient\\bin\\Debug\\netcoreapp3.1\\SampleLoggingClient.1.log D:\\src\\cs-templates\\SampleLoggingClient\\bin\\Debug\\netcoreapp3.1\\SampleLoggingClient.2.log D:\\src\\cs-templates\\SampleLoggingClient\\bin\\Debug\\netcoreapp3.1\\SampleLoggingClient.3.log D:\\src\\cs-templates\\SampleLoggingClient\\bin\\Debug\\netcoreapp3.1\\SampleLoggingClient.4.log -StartTime 20210804_080000 -EndTime 20210804_090000 -Patterns \"Sum .* is \\d*\" \"----------\" \"Previous random\""
     }
   }
 }

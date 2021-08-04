@@ -9,12 +9,9 @@ namespace LogfileProcessor
 {
     static class Functions
     {
-        internal static void processLog(IEnumerable<string> filenames, List<Regex> patterns = null, string output = "")
+        internal static void processLog(IEnumerable<string> filenames, List<Regex> patterns = null, Action<string> print = null)
         {
-            Action<string> print = (x) => Console.WriteLine(x);
-            using StreamWriter outfile = new(output);
-            if (output.Length > 0)
-                print = (x) => outfile.WriteLine(x);
+            if (print is null) print = (x) => Console.WriteLine(x);
 
             if (patterns is not null && patterns.Count > 0)
             {
@@ -72,7 +69,14 @@ namespace LogfileProcessor
             var filenames = new List<string>();
             foreach (FileInfo fi in files)
                 filenames.Add(fi.FullName);
-            processLog(filenames, patterns, output);
+            if (output.Length > 0)
+            {
+                using StreamWriter outfile = new(output);
+                Action<string> print = (x) => outfile.WriteLine(x);
+                processLog(filenames, patterns, print);
+            }
+            else
+                processLog(filenames, patterns);
         }
 
         internal static void tail(string filename, List<Regex> patterns)
@@ -176,6 +180,16 @@ namespace LogfileProcessor
             }
             return idx;
         }
+
+        internal static DateTime parseDate(string date)
+        {
+            return new DateTime(int.Parse(date.Substring(0, 4))
+                ,int.Parse(date.Substring(4, 2))
+                ,int.Parse(date.Substring(6, 2))
+                ,int.Parse(date.Substring(9,2))
+                ,int.Parse(date.Substring(11,2))
+                ,int.Parse(date.Substring(13,2)));
+        }
     }
 
     class Program
@@ -231,6 +245,17 @@ namespace LogfileProcessor
                     foreach (string filename in filenames)
                         files[cnt++] = new FileInfo(filename);
                     var sorted = files.OrderBy(f => f.LastWriteTime).ToList();
+
+                    // Remove files that are not within start and end times.
+                    DateTime start = Functions.parseDate(startTime);
+                    DateTime end = Functions.parseDate(endTime);
+                    cnt = 0;
+                    while(cnt < sorted.Count)
+                    {
+                        if (sorted[cnt].LastWriteTime < start || sorted[cnt].CreationTime > end)
+                            sorted.RemoveAt(cnt);
+                        else cnt++;
+                    }
 
                     // Check if an output file is specified.
                     Functions.processLog(sorted, patternsRegex, output);
