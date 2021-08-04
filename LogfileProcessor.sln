@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31515.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogfileProcessorUI", "LogfileProcessorUI\LogfileProcessorUI.csproj", "{A08795CC-0162-4186-B21F-3D5B2FD1049B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogfileProcessor", "LogfileProcessor\LogfileProcessor.csproj", "{01A962C8-4DA8-4A1D-B3A0-9639888E2571}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A08795CC-0162-4186-B21F-3D5B2FD1049B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A08795CC-0162-4186-B21F-3D5B2FD1049B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A08795CC-0162-4186-B21F-3D5B2FD1049B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A08795CC-0162-4186-B21F-3D5B2FD1049B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01A962C8-4DA8-4A1D-B3A0-9639888E2571}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01A962C8-4DA8-4A1D-B3A0-9639888E2571}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01A962C8-4DA8-4A1D-B3A0-9639888E2571}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01A962C8-4DA8-4A1D-B3A0-9639888E2571}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EE2C1113-6AB4-4EC6-98DC-E39F14046F7F}
+	EndGlobalSection
+EndGlobal
