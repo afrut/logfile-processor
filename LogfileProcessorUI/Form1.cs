@@ -86,6 +86,7 @@ namespace LogfileProcessorUI
                     ,EndTime = this.textBox6.Text
                     ,Patterns = this.textBox7.Text
                 };
+                writeSettings();
                 this.comboBox1.SelectedItem = name;
             }
             else
