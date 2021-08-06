@@ -216,7 +216,7 @@ namespace LogfileProcessorUI
                     {
                         args.Append($"-Files ");
                         foreach (string filename in this.textBox2.Text.Split(new string[] { "," }, StringSplitOptions.None))
-                            args.Append(this.textBox1.Text + filename.Trim() + " ");
+                            args.Append("\"" + this.textBox1.Text + filename.Trim() + "\" ");
                     }
                     else if (this.textBox3.Text.Length > 0)
                     {
@@ -225,7 +225,7 @@ namespace LogfileProcessorUI
                         {
                             args.Append($"-Files ");
                             foreach (String filename in filenames)
-                                args.Append($"{filename} ");
+                                args.Append($"\"{filename}\" ");
                         }
                     }
                 }
