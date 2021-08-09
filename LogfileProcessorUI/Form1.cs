@@ -228,17 +228,17 @@ namespace LogfileProcessorUI
                                 args.Append($"\"{filename}\" ");
                         }
                     }
+
+                    // Check if output file is specified.
+                    if (this.textBox4.Text.Trim().Length > 0)
+                        args.Append($"-Output \"{this.textBox4.Text.Trim()}\" ");
+
+                    // Check if start and end times are specified.
+                    if (this.textBox5.Text.Trim().Length > 0)
+                        args.Append($"-StartTime {this.textBox5.Text.Trim()} ");
+                    if (this.textBox6.Text.Trim().Length > 0)
+                        args.Append($"-EndTime {this.textBox6.Text.Trim()} ");
                 }
-
-                // Check if output file is specified.
-                if (this.textBox4.Text.Trim().Length > 0)
-                    args.Append($"-Output {this.textBox4.Text.Trim()} ");
-
-                // Check if start and end times are specified.
-                if (this.textBox5.Text.Trim().Length > 0)
-                    args.Append($"-StartTime {this.textBox5.Text.Trim()} ");
-                if (this.textBox6.Text.Trim().Length > 0)
-                    args.Append($"-EndTime {this.textBox6.Text.Trim()} ");
 
                 // Adding regex patterns.
                 if (this.textBox7.Text.Trim().Length > 0)
